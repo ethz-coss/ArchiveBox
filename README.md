@@ -1,3 +1,21 @@
+## Why this fork?
+Immediate need:
+- Because we want to modify the Dockerfile so that `archivebox` user is created with our chosen uid rather than the default 999. This lets us write to the NAS share at /mnt/coss which we configure to be owned by `archivebox` user on the host.
+
+Long term need:
+- We might want to tweak the original tool to suit our requirements going forward
+
+### Important: keep updated with original repo
+```
+git remote add upstream https://github.com/ArchiveBox/ArchiveBox.git
+
+git fetch upstream
+git checkout master
+git merge upstream/master
+```
+and push the changes to this repo from time to time
+
+----
 <div align="center">
 <em><img src="https://i.imgur.com/5B48E3N.png" height="90px"></em>
 <h1>ArchiveBox<br/><sub>Open-source self-hosted web archiving.</sub></h1>
