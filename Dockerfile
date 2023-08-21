@@ -3,11 +3,12 @@
 # Usage:
 #     git submodule update --init --recursive
 #     git pull --recurse-submodules
-#     docker build . -t archivebox --no-cache
-#     docker run -v "$PWD/data":/data archivebox init
-#     docker run -v "$PWD/data":/data archivebox add 'https://example.com'
-#     docker run -v "$PWD/data":/data -it archivebox manage createsuperuser
-#     docker run -v "$PWD/data":/data -p 8000:8000 archivebox server
+#     docker build . -t archivebox-forked --build-arg HOST_ARCHIVEBOX_UID=$(id -u archivebox) --no-cache
+#     docker run -v $PWD/data:/data -v /mnt/coss/public/archive-test/:/archive -p 8000:8000 -it archivebox-forked 
+#     docker run -v "$PWD/data":/data -v /mnt/coss/public/archive-test/:/archive archivebox-forked init
+#     docker run -v "$PWD/data":/data -v /mnt/coss/public/archive-test/:/archive archivebox-forked add 'https://example.com'
+#     docker run -v "$PWD/data":/data -v /mnt/coss/public/archive-test/:/archive -it archivebox-forked manage createsuperuser
+#     docker run -v "$PWD/data":/data -v /mnt/coss/public/archive-test/:/archive -p 8000:8000 archivebox-forked server
 # Multi-arch build:
 #     docker buildx create --use
 #     docker buildx build . --platform=linux/amd64,linux/arm64,linux/arm/v7 --push -t archivebox/archivebox:latest -t archivebox/archivebox:dev
@@ -34,6 +35,9 @@ ENV TZ=UTC \
     DEBIAN_FRONTEND=noninteractive \
     APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
+# pass during docker build .. --build-arg HOST_ARCHIVEBOX_UID=..
+ARG HOST_ARCHIVEBOX_UID=1001
+
 # Application-level base config
 ENV CODE_DIR=/app \
     VENV_PATH=/venv \
@@ -43,7 +47,7 @@ ENV CODE_DIR=/app \
 
 # Create non-privileged user for archivebox and chrome
 RUN groupadd --system $ARCHIVEBOX_USER \
-    && useradd --system --create-home --gid $ARCHIVEBOX_USER --groups audio,video $ARCHIVEBOX_USER
+    && useradd --system --create-home --uid $HOST_ARCHIVEBOX_UID --gid $ARCHIVEBOX_USER --groups audio,video $ARCHIVEBOX_USER
 
 # Install system dependencies
 RUN apt-get update -qq \

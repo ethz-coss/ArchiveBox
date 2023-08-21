@@ -10,8 +10,8 @@ Long term need:
 git remote add upstream https://github.com/ArchiveBox/ArchiveBox.git
 
 git fetch upstream
-git checkout master
-git merge upstream/master
+git checkout dev
+git merge upstream/dev
 ```
 and push the changes to this repo from time to time
 
